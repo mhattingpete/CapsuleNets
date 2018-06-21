@@ -5,8 +5,6 @@ import torch.nn.functional as F
 
 from layers import CapsLayer
 
-use_cuda = torch.cuda.is_available()
-
 class CapsuleNet(nn.Module):
 	def __init__(self,input_size,output_size):
 		super().__init__()
@@ -34,6 +32,8 @@ class CapsuleNet(nn.Module):
 		if y is None:
 			# get most active capsule
 			_,max_index = out.max(dim=1)
+			cpu_device = torch.device("cpu")
+			max_index = max_index.to(cpu_device)
 			y = Variable(torch.eye(self.output_size)).index_select(dim=0,index=max_index.data)
 		rec = self.decoder((x*y[:,:,None]).view(x.size(0),-1))
 		return out,rec

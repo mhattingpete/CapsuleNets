@@ -28,7 +28,7 @@ def train(model,device,train_loader,optimizer,epoch,log_interval):
 	for batch_idx,(data,target) in enumerate(train_loader):
 		data = data.to(device)
 		target = torch.eye(10).index_select(dim=0,index=target)
-		#target = target.to(device)
+		target = target.to(device)
 		optimizer.zero_grad()
 		data = data.squeeze(1)
 		output,reconstruction = model(data,target)
@@ -49,7 +49,7 @@ def test(model,device,test_loader):
 		for data,target in test_loader:
 			data = data.to(device)
 			data = data.squeeze(1)
-			#target = target.to(device)
+			target = target.to(device)
 			output,reconstruction = model(data)
 			test_loss += capsule_loss(data,target,output,reconstruction).item() # sum up batch loss
 			pred = output.max(1,keepdim=True)[1] # get the index of the max log-probability
