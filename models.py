@@ -32,8 +32,8 @@ class CapsuleNet(nn.Module):
 		if y is None:
 			# get most active capsule
 			_,max_index = out.max(dim=1)
-			cpu_device = torch.device("cpu")
-			max_index = max_index.to(cpu_device)
+			max_index = max_index.to(torch.device("cpu"))
 			y = Variable(torch.eye(self.output_size)).index_select(dim=0,index=max_index.data)
+			y = y.to(torch.device("cuda"))
 		rec = self.decoder((x*y[:,:,None]).view(x.size(0),-1))
 		return out,rec
