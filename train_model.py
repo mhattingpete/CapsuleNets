@@ -1,18 +1,20 @@
+import torch
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 from torch.autograd import Variable
 from torch import optim
-import torch
 from torchvision import datasets, transforms
 
 from models import CapsuleNet
 from utils import train,test,augmentation
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
-
 
 if __name__ == '__main__':
+	print(torch.cuda.is_available())
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	print(device)
 
 	# Training dataset
 	train_loader = torch.utils.data.DataLoader(datasets.MNIST(root='.',train=True,transform=transforms.Compose([

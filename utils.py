@@ -26,8 +26,9 @@ def train(model,device,train_loader,optimizer,epoch,log_interval):
 	model.train()
 	train_loss = 0
 	for batch_idx,(data,target) in enumerate(train_loader):
-		data,target = data.to(device),target.to(device)
+		data = data.to(device)
 		target = torch.eye(10).index_select(dim=0,index=target)
+		target = target.to(device)
 		optimizer.zero_grad()
 		data = data.squeeze(1)
 		output,reconstruction = model(data,target)
