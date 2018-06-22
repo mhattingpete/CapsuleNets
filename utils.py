@@ -18,7 +18,7 @@ def capsule_loss(images,labels,predictions,reconstructions):
 	left = F.relu(0.9-predictions)**2
 	right = F.relu(predictions-0.1)**2
 	margin_loss = (labels*left+0.5*(1.-labels)*right).sum()
-	images = images.view(reconstructions.size()[0],-1)
+	images = images.view(reconstructions.size(0),-1)
 	recon_loss = F.mse_loss(reconstructions,images,size_average=False)
 	return (margin_loss+0.0005*recon_loss)/images.size(0)
 
@@ -49,11 +49,13 @@ def test(model,device,test_loader):
 		for data,target in test_loader:
 			data = data.to(device)
 			data = data.squeeze(1)
+			labels = target
+			target = torch.eye(10).index_select(dim=0,index=target)
 			target = target.to(device)
 			output,reconstruction = model(data)
 			test_loss += capsule_loss(data,target,output,reconstruction).item() # sum up batch loss
 			pred = output.max(1,keepdim=True)[1] # get the index of the max log-probability
-			correct += pred.eq(target.view_as(pred)).sum().item()
+			correct += pred.eq(labels.view_as(pred)).sum().item()
 	test_loss /= len(test_loader.dataset)
 	print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
 		test_loss,correct,len(test_loader.dataset),100.*correct/len(test_loader.dataset)))

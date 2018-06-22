@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	    transforms.ToTensor(),augmentation
 	])),batch_size=64,shuffle=True)
 
-	model = CapsuleNet(input_size=1,output_size=10).to(device)
+	model = CapsuleNet(input_size=1,output_size=10,device=device).to(device)
 
 	optimizer = optim.Adam(model.parameters())
 

@@ -6,9 +6,10 @@ import torch.nn.functional as F
 from layers import CapsLayer
 
 class CapsuleNet(nn.Module):
-	def __init__(self,input_size,output_size):
+	def __init__(self,input_size,output_size,device):
 		super().__init__()
 		self.output_size = output_size
+		self.device = device
 		self.conv = nn.Conv2d(in_channels=input_size,out_channels=256,kernel_size=9,stride=1)
 		self.primaryCaps = CapsLayer(in_channels=256,out_channels=32,num_capsules=8,kernel_size=9,stride=2)
 		self.digitCaps = CapsLayer(in_channels=8,out_channels=16,num_capsules=output_size,num_route_nodes=32*6*6)
@@ -34,6 +35,6 @@ class CapsuleNet(nn.Module):
 			_,max_index = out.max(dim=1)
 			max_index = max_index.to(torch.device("cpu"))
 			y = Variable(torch.eye(self.output_size)).index_select(dim=0,index=max_index.data)
-			y = y.to(torch.device("cuda"))
+			y = y.to(self.device)
 		rec = self.decoder((x*y[:,:,None]).view(x.size(0),-1))
 		return out,rec
