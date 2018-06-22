@@ -50,6 +50,7 @@ def test(model,device,test_loader):
 			data = data.to(device)
 			data = data.squeeze(1)
 			labels = target
+			labels = labels.to(device)
 			target = torch.eye(10).index_select(dim=0,index=target)
 			target = target.to(device)
 			output,reconstruction = model(data)
